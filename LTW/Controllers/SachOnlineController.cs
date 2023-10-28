@@ -4,32 +4,53 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using LTW.Models;
-using System.Data.SqlClient;
+using PagedList;
+using PagedList.Mvc;
 
-namespace LTW.Controllers
+namespace SachOnline.Controllers
 {
-
     public class SachOnlineController : Controller
     {
         dbSachOnlineDataContext data = new dbSachOnlineDataContext();
+        /// <summary>
+        /// 
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private List<SACH> LaySachMoi(int count)
+        {
+            return data.SACHes.OrderByDescending(a => a.NgayCapNhat).Take(count).ToList();
+        }
 
+        private List<SACH> LaySachBanNhieu(int count)
+        {
+            return data.SACHes.OrderByDescending(a => a.SoLuongBan).Take(count).ToList();
+        }
 
         // GET: SachOnline
-        public ActionResult Index()
+        public ActionResult Index(int ? page)
         {
-            var listSachMoi = LaySachMoi(6);
-            return View(listSachMoi);
+            int iSize = 6;
+            int iPageNum = (page ?? 1);
+            var listSachMoi = LaySachMoi(20);
+            return View(listSachMoi.ToPagedList(iPageNum, iSize));
         }
-        public ActionResult ChuDePartial()
+
+        public ActionResult NavPartial()
         {
-            var listChuDe = from cd in data.CHUDEs select cd; 
+            var listChuDe = from cd in data.CHUDEs select cd;
             return PartialView(listChuDe);
         }
 
-        public ActionResult SachBanNhieuPartial()
+        public ActionResult SliderPartial()
         {
-            var listSachBanNhieu = LaySachBanNhieu(6);
-            return PartialView(listSachBanNhieu);
+            return PartialView();
+        }
+
+        public ActionResult ChuDePartial()
+        {
+            var listChuDe = from cd in data.CHUDEs select cd;
+            return PartialView(listChuDe);
         }
 
         public ActionResult NhaXuatBanPartial()
@@ -38,15 +59,39 @@ namespace LTW.Controllers
             return PartialView(listNhaXuatBan);
         }
 
-        private List<SACH> LaySachBanNhieu(int count)
+        public ActionResult SachBanNhieuPartial()
         {
-            return data.SACHes.OrderByDescending(a => a.Soluongban).Take(count).ToList();
+            var listSachBanNhieu = LaySachBanNhieu(6);
+            return PartialView(listSachBanNhieu);
         }
 
-        private List<SACH> LaySachMoi(int count)
-        { 
-            return data.SACHes.OrderByDescending(a => a.Ngaycapnhat).Take(count).ToList();
+        public ActionResult ChiTietSach(int id)
+        {
+            var sach = from s in data.SACHes where s.MaSach == id select s;
+            return View(sach.Single());
         }
 
+        public ActionResult SachTheoChuDe(int iMaCD, int ? page)
+        {
+            ViewBag.MaCD = iMaCD;
+            int iSize = 3;
+            int iPageNum = (page ?? 1);
+            var sach = from s in data.SACHes where s.MaCD == iMaCD select s;
+            return View(sach.ToPagedList(iPageNum,iSize));
+        }
+
+        public ActionResult SachTheoNhaXuatBan(int iMaXB, int? page)
+        {
+            ViewBag.MaXB = iMaXB;
+            int iSize = 3;
+            int iPageNum = (page ?? 1);
+            var sach = from s in data.SACHes where s.MaNXB == iMaXB select s;
+            return View(sach.ToPagedList(iPageNum, iSize));
+        }
+
+        public ActionResult LoginLogout()
+        {
+            return PartialView("LoginLogoutPartial");
+        }
     }
 }

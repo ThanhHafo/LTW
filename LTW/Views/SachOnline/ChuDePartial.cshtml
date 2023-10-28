@@ -1,18 +1,9 @@
 ﻿@model IEnumerable<LTW.Models.CHUDE>
 <ul class="list-group">
-    <li class="list-group-item active" style="font-weight:bold; text-align:center">Sach theo chu de</li>
-    <a href="#" class="list-group-item">Ngoai ngu</a>
-    <a href="#" class="list-group-item">Cong nhe thong tin</a>
-    <a href="#" class="list-group-item">Luat</a>
-    <a href="#" class="list-group-item">Van hoc</a>
-    <a href="#" class="list-group-item">Khoa hoc ky thuat</a>
-    <a href="#" class="list-group-item">Nong nghiep</a>
-    <a href="#" class="list-group-item">Lich su, dia ly</a>
-    <a href="#" class="list-group-item">Kinh te</a>
-    <a href="#" class="list-group-item">nghe thuat cuoc song</a>
+    <li class="list-group-item active" style="font-weight:bold; text-align:center">Sách theo chủ đề</li>
     @foreach (var item in Model)
     {
-        <a href="@Url.Action("SachTheoChuDe","SachOnline", new { id = item.MaCD})" class="list-group-item">@item.Tenchude</a>
+        <a href="@Url.Action("SachTheoChuDe","SachOnline", new { iMaCD = item.MaCD})" class="list-group-item">@item.TenChuDe</a>
 
     }
 
